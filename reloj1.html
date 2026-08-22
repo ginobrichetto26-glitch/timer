@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reloj Digital Pastel</title>
+<style>
+  :root {
+    --bg1: #ffe5ec;
+    --bg2: #e0f7fa;
+    --card: #ffffff;
+    --text: #4a4a68;
+    --muted: #9b9bb4;
+    --pink-dark: #ff9eb5;
+    --lavender-dark: #b9a3e6;
+    --mint: #c1f0dc;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+    overflow: hidden;
+    padding: 4vw;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 2vw;
+    box-shadow: 0 1.5vw 3vw rgba(150, 130, 180, 0.2);
+    padding: 4vw 5vw;
+    text-align: center;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .digital-time {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.15em;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(1.8rem, 12vw, 4.5rem);
+    line-height: 1;
+  }
+
+  .digital-time .colon {
+    color: var(--pink-dark);
+    animation: blink 1s steps(1) infinite;
+  }
+
+  .digital-time .seconds {
+    font-size: 0.5em;
+    color: var(--lavender-dark);
+    align-self: flex-end;
+    margin-left: 0.1em;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0.2; }
+  }
+
+  .date-label {
+    margin-top: 0.8em;
+    font-size: clamp(0.75rem, 2.5vw, 1.05rem);
+    color: var(--muted);
+    text-transform: capitalize;
+  }
+
+  .badge {
+    display: inline-block;
+    margin-top: 1em;
+    padding: 0.35em 1em;
+    border-radius: 999px;
+    background: var(--mint);
+    color: var(--text);
+    font-size: clamp(0.65rem, 2vw, 0.8rem);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="digital-time">
+    <span id="hours">00</span><span class="colon">:</span><span id="minutes">00</span><span class="seconds" id="seconds">00</span>
+  </div>
+  <div class="date-label" id="dateLabel"></div>
+  <div class="badge" id="tzBadge"></div>
+</div>
+
+<script>
+  const hoursEl = document.getElementById('hours');
+  const minutesEl = document.getElementById('minutes');
+  const secondsEl = document.getElementById('seconds');
+  const dateLabel = document.getElementById('dateLabel');
+  const tzBadge = document.getElementById('tzBadge');
+
+  function updateClock() {
+    const now = new Date();
+    hoursEl.textContent = now.getHours().toString().padStart(2, '0');
+    minutesEl.textContent = now.getMinutes().toString().padStart(2, '0');
+    secondsEl.textContent = now.getSeconds().toString().padStart(2, '0');
+
+    const opciones = { weekday: 'long', day: 'numeric', month: 'long' };
+    dateLabel.textContent = now.toLocaleDateString('es-ES', opciones);
+
+    tzBadge.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>
