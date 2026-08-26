@@ -1,124 +1,173 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reloj Digital Pastel</title>
+<title>Sunrise Digital Clock</title>
+
 <style>
   :root {
-    --bg1: #ffe5ec;
-    --bg2: #e0f7fa;
-    --card: #ffffff;
-    --text: #4a4a68;
-    --muted: #9b9bb4;
-    --pink-dark: #ff9eb5;
-    --lavender-dark: #b9a3e6;
-    --mint: #c1f0dc;
+    --bg1: #ffd6a5;
+    --bg2: #ffb7a5;
+    --bg3: #ffe8c2;
+    --card: #fffaf5;
+    --text: #5a4650;
+    --muted: #a87868;
+    --sunset: #f28c6b;
+    --lavender: #c69acb;
   }
-  * { box-sizing: border-box; }
+
+  * {
+    box-sizing: border-box;
+  }
+
   html, body {
     margin: 0;
     width: 100%;
     height: 100%;
   }
+
   body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    background: linear-gradient(
+      135deg,
+      var(--bg1),
+      var(--bg2),
+      var(--bg3)
+    );
     font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
     overflow: hidden;
     padding: 4vw;
   }
 
   .card {
+    position: relative;
     background: var(--card);
     border-radius: 2vw;
-    box-shadow: 0 1.5vw 3vw rgba(150, 130, 180, 0.2);
-    padding: 4vw 5vw;
-    text-align: center;
+    box-shadow: 0 1.5vw 3vw rgba(180, 120, 90, 0.2);
     width: 100%;
     max-width: 480px;
+    height: 260px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .digital-time {
     display: flex;
     align-items: baseline;
     justify-content: center;
-    gap: 0.15em;
+    gap: 0.08em;
+
     font-weight: 700;
     color: var(--text);
     font-variant-numeric: tabular-nums;
-    font-size: clamp(1.8rem, 12vw, 4.5rem);
+
+    font-size: clamp(4rem, 18vw, 8rem);
     line-height: 1;
   }
 
   .digital-time .colon {
-    color: var(--pink-dark);
+    color: var(--sunset);
     animation: blink 1s steps(1) infinite;
   }
 
   .digital-time .seconds {
-    font-size: 0.5em;
-    color: var(--lavender-dark);
+    font-size: 0.35em;
+    color: var(--lavender);
     align-self: flex-end;
-    margin-left: 0.1em;
+    margin-left: 0.05em;
   }
 
   @keyframes blink {
-    50% { opacity: 0.2; }
+    50% {
+      opacity: 0.2;
+    }
   }
 
-  .date-label {
-    margin-top: 0.8em;
-    font-size: clamp(0.75rem, 2.5vw, 1.05rem);
+  /* AM / PM abajo a la izquierda */
+  .ampm {
+    position: absolute;
+    bottom: 20px;
+    left: 25px;
+
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  /* Día de la semana abajo a la derecha */
+  .day-label {
+    position: absolute;
+    bottom: 20px;
+    right: 25px;
+
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--muted);
     text-transform: capitalize;
   }
-
-  .badge {
-    display: inline-block;
-    margin-top: 1em;
-    padding: 0.35em 1em;
-    border-radius: 999px;
-    background: var(--mint);
-    color: var(--text);
-    font-size: clamp(0.65rem, 2vw, 0.8rem);
-    font-weight: 600;
-  }
 </style>
 </head>
+
 <body>
 
 <div class="card">
+
   <div class="digital-time">
-    <span id="hours">00</span><span class="colon">:</span><span id="minutes">00</span><span class="seconds" id="seconds">00</span>
+    <span id="hours">00</span>
+    <span class="colon">:</span>
+    <span id="minutes">00</span>
+    <span class="seconds" id="seconds">00</span>
   </div>
-  <div class="date-label" id="dateLabel"></div>
-  <div class="badge" id="tzBadge"></div>
+
+  <div class="ampm" id="ampm">AM</div>
+
+  <div class="day-label" id="dayLabel">Wednesday</div>
+
 </div>
 
 <script>
+
   const hoursEl = document.getElementById('hours');
   const minutesEl = document.getElementById('minutes');
   const secondsEl = document.getElementById('seconds');
-  const dateLabel = document.getElementById('dateLabel');
-  const tzBadge = document.getElementById('tzBadge');
+  const ampmEl = document.getElementById('ampm');
+  const dayLabel = document.getElementById('dayLabel');
 
   function updateClock() {
+
     const now = new Date();
-    hoursEl.textContent = now.getHours().toString().padStart(2, '0');
-    minutesEl.textContent = now.getMinutes().toString().padStart(2, '0');
+
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    // AM / PM
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    // Convertir a formato de 12 horas
+    hours = hours % 12;
+    hours = hours === 0 ? 12 : hours;
+
+    hoursEl.textContent = hours.toString().padStart(2, '0');
+    minutesEl.textContent = minutes.toString().padStart(2, '0');
     secondsEl.textContent = now.getSeconds().toString().padStart(2, '0');
 
-    const opciones = { weekday: 'long', day: 'numeric', month: 'long' };
-    dateLabel.textContent = now.toLocaleDateString('es-ES', opciones);
+    ampmEl.textContent = ampm;
 
-    tzBadge.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // Día de la semana
+    dayLabel.textContent = now.toLocaleDateString('en-US', {
+      weekday: 'long'
+    });
   }
 
   updateClock();
+
   setInterval(updateClock, 1000);
+
 </script>
 
 </body>
