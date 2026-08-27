@@ -3,20 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sunrise Digital Clock</title>
+<title>Digital Clock</title>
 
 <style>
-  :root {
-    --bg1: #ffd6a5;
-    --bg2: #ffb7a5;
-    --bg3: #ffe8c2;
-    --card: #fffaf5;
-    --text: #5a4650;
-    --muted: #a87868;
-    --sunset: #f28c6b;
-    --lavender: #c69acb;
-  }
-
   * {
     box-sizing: border-box;
   }
@@ -31,102 +20,93 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(
-      135deg,
-      var(--bg1),
-      var(--bg2),
-      var(--bg3)
-    );
-    font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+    background: #ffffff;
+    font-family: 'Arial Narrow', 'Arial', sans-serif;
     overflow: hidden;
-    padding: 4vw;
   }
 
-  .card {
-    position: relative;
-    background: var(--card);
-    border-radius: 2vw;
-    box-shadow: 0 1.5vw 3vw rgba(180, 120, 90, 0.2);
+  /* CONTENEDOR GENERAL */
+  .clock {
+    display: flex;
     width: 100%;
-    max-width: 480px;
-    height: 260px;
+    max-width: 700px;
+    height: 300px;
+    gap: 3px;
+  }
 
+  /* CADA MITAD */
+  .panel {
+    position: relative;
+    flex: 1;
+    background: #FFD1AE;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 4px;
   }
 
-  .digital-time {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 0.08em;
-
-    font-weight: 700;
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
-
-    font-size: clamp(4rem, 18vw, 8rem);
+  /* NÚMEROS */
+  .number {
+    color: #ffffff;
+    font-size: clamp(6rem, 15vw, 11rem);
+    font-weight: 800;
     line-height: 1;
+    letter-spacing: -0.06em;
+    font-family: 'Arial Narrow', 'Arial', sans-serif;
   }
 
-  .digital-time .colon {
-    color: var(--sunset);
-    animation: blink 1s steps(1) infinite;
-  }
-
-  .digital-time .seconds {
-    font-size: 0.35em;
-    color: var(--lavender);
-    align-self: flex-end;
-    margin-left: 0.05em;
-  }
-
-  @keyframes blink {
-    50% {
-      opacity: 0.2;
-    }
-  }
-
-  /* AM / PM abajo a la izquierda */
+  /* PM */
   .ampm {
     position: absolute;
-    bottom: 20px;
+    bottom: 18px;
     left: 25px;
 
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--muted);
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
   }
 
-  /* Día de la semana abajo a la derecha */
-  .day-label {
+  /* DÍA */
+  .day {
     position: absolute;
-    bottom: 20px;
+    bottom: 18px;
     right: 25px;
 
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: capitalize;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
   }
+
+  /* LÍNEA DEL MEDIO */
+  .divider {
+    width: 3px;
+    background: #ffffff;
+  }
+
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="clock">
 
-  <div class="digital-time">
-    <span id="hours">00</span>
-    <span class="colon">:</span>
-    <span id="minutes">00</span>
-    <span class="seconds" id="seconds">00</span>
+  <!-- HORAS -->
+  <div class="panel">
+    <div class="number" id="hours">07</div>
+    <div class="ampm" id="ampm">PM</div>
   </div>
 
-  <div class="ampm" id="ampm">AM</div>
+  <!-- LÍNEA -->
+  <div class="divider"></div>
 
-  <div class="day-label" id="dayLabel">Wednesday</div>
+  <!-- MINUTOS -->
+  <div class="panel">
+    <div class="number" id="minutes">00</div>
+    <div class="day" id="day">FRIDAY</div>
+  </div>
 
 </div>
 
@@ -134,9 +114,8 @@
 
   const hoursEl = document.getElementById('hours');
   const minutesEl = document.getElementById('minutes');
-  const secondsEl = document.getElementById('seconds');
   const ampmEl = document.getElementById('ampm');
-  const dayLabel = document.getElementById('dayLabel');
+  const dayEl = document.getElementById('day');
 
   function updateClock() {
 
@@ -148,24 +127,26 @@
     // AM / PM
     const ampm = hours >= 12 ? 'PM' : 'AM';
 
-    // Convertir a formato de 12 horas
+    // Convertir a formato 12 horas
     hours = hours % 12;
     hours = hours === 0 ? 12 : hours;
 
+    // Mostrar hora y minutos
     hoursEl.textContent = hours.toString().padStart(2, '0');
     minutesEl.textContent = minutes.toString().padStart(2, '0');
-    secondsEl.textContent = now.getSeconds().toString().padStart(2, '0');
 
+    // AM / PM
     ampmEl.textContent = ampm;
 
     // Día de la semana
-    dayLabel.textContent = now.toLocaleDateString('en-US', {
+    dayEl.textContent = now.toLocaleDateString('en-US', {
       weekday: 'long'
-    });
+    }).toUpperCase();
   }
 
   updateClock();
 
+  // Actualizar cada segundo
   setInterval(updateClock, 1000);
 
 </script>
