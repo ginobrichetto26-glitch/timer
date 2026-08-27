@@ -2,89 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Clock</title>
 
 <style>
-  * {
-    box-sizing: border-box;
-  }
-
-  html, body {
+html, body {
     margin: 0;
     width: 100%;
     height: 100%;
-  }
+}
 
-  body {
+body {
     display: flex;
-    align-items: center;
     justify-content: center;
-    background: #ffffff;
-    font-family: 'Arial Narrow', 'Arial', sans-serif;
-    overflow: hidden;
-  }
+    align-items: center;
+    background: white;
+    font-family: Arial, sans-serif;
+}
 
-  /* CONTENEDOR GENERAL */
-  .clock {
+/* RELOJ */
+.clock {
     display: flex;
-    width: 100%;
-    max-width: 700px;
+    width: 700px;
     height: 300px;
-    gap: 3px;
-  }
+}
 
-  /* CADA MITAD */
-  .panel {
+/* CADA CUADRO */
+.box {
     position: relative;
-    flex: 1;
-    background: #FFD1AE;
+    width: 50%;
+    height: 100%;
+    background: #FFD3B5;
     display: flex;
-    align-items: center;
     justify-content: center;
-    border-radius: 4px;
-  }
+    align-items: center;
+}
 
-  /* NÚMEROS */
-  .number {
-    color: #ffffff;
-    font-size: clamp(6rem, 15vw, 11rem);
-    font-weight: 800;
+/* LÍNEA DEL MEDIO */
+.line {
+    width: 4px;
+    height: 100%;
+    background: white;
+}
+
+/* NÚMEROS */
+.number {
+    color: white;
+    font-size: 150px;
+    font-weight: bold;
     line-height: 1;
-    letter-spacing: -0.06em;
-    font-family: 'Arial Narrow', 'Arial', sans-serif;
-  }
+}
 
-  /* PM */
-  .ampm {
+/* PM */
+.ampm {
     position: absolute;
     bottom: 18px;
-    left: 25px;
+    left: 22px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
 
-    color: #ffffff;
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-  }
-
-  /* DÍA */
-  .day {
+/* DÍA */
+.day {
     position: absolute;
     bottom: 18px;
-    right: 25px;
-
-    color: #ffffff;
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    text-transform: uppercase;
-  }
-
-  /* LÍNEA DEL MEDIO */
-  .divider {
-    width: 3px;
-    background: #ffffff;
-  }
+    right: 22px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
 
 </style>
 </head>
@@ -93,61 +78,54 @@
 
 <div class="clock">
 
-  <!-- HORAS -->
-  <div class="panel">
-    <div class="number" id="hours">07</div>
-    <div class="ampm" id="ampm">PM</div>
-  </div>
+    <div class="box">
+        <div class="number" id="hours">07</div>
+        <div class="ampm" id="ampm">PM</div>
+    </div>
 
-  <!-- LÍNEA -->
-  <div class="divider"></div>
+    <div class="line"></div>
 
-  <!-- MINUTOS -->
-  <div class="panel">
-    <div class="number" id="minutes">00</div>
-    <div class="day" id="day">FRIDAY</div>
-  </div>
+    <div class="box">
+        <div class="number" id="minutes">00</div>
+        <div class="day" id="day">WEDNESDAY</div>
+    </div>
 
 </div>
 
 <script>
 
-  const hoursEl = document.getElementById('hours');
-  const minutesEl = document.getElementById('minutes');
-  const ampmEl = document.getElementById('ampm');
-  const dayEl = document.getElementById('day');
-
-  function updateClock() {
+function updateClock() {
 
     const now = new Date();
 
     let hours = now.getHours();
-    const minutes = now.getMinutes();
+    let minutes = now.getMinutes();
 
-    // AM / PM
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    let ampm = hours >= 12 ? "PM" : "AM";
 
-    // Convertir a formato 12 horas
     hours = hours % 12;
-    hours = hours === 0 ? 12 : hours;
 
-    // Mostrar hora y minutos
-    hoursEl.textContent = hours.toString().padStart(2, '0');
-    minutesEl.textContent = minutes.toString().padStart(2, '0');
+    if (hours === 0) {
+        hours = 12;
+    }
 
-    // AM / PM
-    ampmEl.textContent = ampm;
+    document.getElementById("hours").textContent =
+        String(hours).padStart(2, "0");
 
-    // Día de la semana
-    dayEl.textContent = now.toLocaleDateString('en-US', {
-      weekday: 'long'
-    }).toUpperCase();
-  }
+    document.getElementById("minutes").textContent =
+        String(minutes).padStart(2, "0");
 
-  updateClock();
+    document.getElementById("ampm").textContent = ampm;
 
-  // Actualizar cada segundo
-  setInterval(updateClock, 1000);
+    document.getElementById("day").textContent =
+        now.toLocaleDateString("en-US", {
+            weekday: "long"
+        }).toUpperCase();
+}
+
+updateClock();
+
+setInterval(updateClock, 1000);
 
 </script>
 
