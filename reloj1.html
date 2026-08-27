@@ -1,258 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Aesthetic Calendar</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
+<style>
 
-        body {
-            width: 250px;
-            height: 350px;
-            margin: 15px auto;
-            font-family: Arial, sans-serif;
-            background-color: #fffaf6;
-            color: #654c3c;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        h3 {
-            text-align: center;
-            color: #c4774d;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 10px;
-        }
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
 
-        #calWrapper {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 2px;
-        }
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    font-family: Arial, sans-serif;
+}
 
-        .dayHeader {
-            width: 30px;
-            height: 18px;
-            background-color: #fde6d5;
-            color: #b56d47;
-            font-size: 8px;
-            font-weight: bold;
-            text-align: center;
-            border-radius: 5px;
-        }
+/* WIDGET */
+.progress-card {
+    width: 300px;
+    height: 125px;
+    background: #FFF4EC;
+    border-radius: 12px;
+    padding: 18px 20px;
+    color: #D9824B;
+}
 
-        .dayCell {
-            width: 30px;
-            height: 30px;
-            font-size: 9px;
-            vertical-align: top;
-            text-align: right;
-            padding: 4px;
-            box-sizing: border-box;
-            background-color: #fff0e5;
-            color: #725442;
-            border-radius: 6px;
-        }
+/* TÍTULO */
+.title {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 14px;
+}
 
-        .emptyCell {
-            background-color: transparent;
-        }
+/* INFORMACIÓN */
+.info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #777;
+    font-size: 12px;
+    margin-bottom: 9px;
+}
 
-        .today {
-            background-color: #f6c29d;
-            color: #8c4d2e;
-            font-weight: bold;
-            border: 1px solid #e6a273;
-        }
+.week {
+    font-weight: bold;
+    color: #D9824B;
+}
 
-    </style>
+/* BARRA */
+.progress-bar {
+    width: 100%;
+    height: 9px;
+    background: #F8DED0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: #F4A875;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+</style>
 </head>
 
 <body>
 
-    <h3>
-        <span id="dateHolder"></span>
-    </h3>
+<div class="progress-card">
 
-    <table id="calWrapper">
-    </table>
+    <div class="title">
+        semester progress
+    </div>
 
+    <div class="info">
+        <span>Fall 2026</span>
+        <span class="week" id="week">Week 1 of 16</span>
+    </div>
 
-    <script>
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
 
-        (function() {
+</div>
 
-            var today = new Date();
+<script>
 
-            var month = today.getMonth();
-            var day = today.getDate();
-            var year = today.getFullYear();
+const semesterStart = new Date("2026-08-24");
+const totalWeeks = 16;
+const totalDays = totalWeeks * 7;
 
+function updateProgress() {
 
-            var months = [
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December"
-            ];
+    const today = new Date();
 
+    const difference =
+        today.getTime() - semesterStart.getTime();
 
-            var days = [
-                "Sun",
-                "Mon",
-                "Tue",
-                "Wed",
-                "Thu",
-                "Fri",
-                "Sat"
-            ];
+    const daysPassed =
+        difference / (1000 * 60 * 60 * 24);
 
+    /* Semana actual */
+    let currentWeek =
+        Math.floor(daysPassed / 7) + 1;
 
-            function displayDate() {
+    if (currentWeek < 1) {
+        currentWeek = 1;
+    }
 
-                var holder =
-                    document.getElementById("dateHolder");
+    if (currentWeek > totalWeeks) {
+        currentWeek = totalWeeks;
+    }
 
-                holder.innerText =
-                    months[month] + " " + year;
+    /* PROGRESO REAL POR DÍAS */
+    let percentage =
+        (daysPassed / totalDays) * 100;
 
-            }
+    if (percentage < 0) {
+        percentage = 0;
+    }
 
+    if (percentage > 100) {
+        percentage = 100;
+    }
 
-            function createDayHeaders() {
+    document.getElementById("week").textContent =
+        "Week " + currentWeek + " of " + totalWeeks;
 
-                var wrapper =
-                    document.getElementById("calWrapper");
+    document.getElementById("progress").style.width =
+        percentage + "%";
+}
 
-                var row =
-                    document.createElement("tr");
+updateProgress();
 
-
-                for (var i = 0; i < days.length; i++) {
-
-                    var el =
-                        document.createElement("th");
-
-                    el.setAttribute(
-                        "class",
-                        "dayHeader"
-                    );
-
-                    el.innerText = days[i];
-
-                    row.appendChild(el);
-                }
-
-
-                wrapper.appendChild(row);
-            }
-
-
-            function createDayCells() {
-
-                var wrapper =
-                    document.getElementById("calWrapper");
-
-                var firstDay =
-                    new Date(year, month, 1).getDay();
-
-                var lastDay =
-                    new Date(
-                        year,
-                        month + 1,
-                        0
-                    ).getDate();
-
-                var dayNumber = 1;
-
-
-                while (dayNumber <= lastDay) {
-
-                    var row =
-                        document.createElement("tr");
-
-
-                    for (var i = 0; i < 7; i++) {
-
-                        var cell =
-                            document.createElement("td");
-
-
-                        if (
-                            dayNumber === 1 &&
-                            i < firstDay
-                        ) {
-
-                            cell.setAttribute(
-                                "class",
-                                "dayCell emptyCell"
-                            );
-
-                        }
-
-                        else if (dayNumber <= lastDay) {
-
-                            cell.setAttribute(
-                                "class",
-                                "dayCell"
-                            );
-
-                            cell.innerText =
-                                dayNumber;
-
-
-                            if (
-                                dayNumber === day &&
-                                month === today.getMonth() &&
-                                year === today.getFullYear()
-                            ) {
-
-                                cell.setAttribute(
-                                    "class",
-                                    "dayCell today"
-                                );
-
-                            }
-
-
-                            dayNumber++;
-
-                        }
-
-                        else {
-
-                            cell.setAttribute(
-                                "class",
-                                "dayCell emptyCell"
-                            );
-
-                        }
-
-
-                        row.appendChild(cell);
-                    }
-
-
-                    wrapper.appendChild(row);
-                }
-            }
-
-
-            displayDate();
-
-            createDayHeaders();
-
-            createDayCells();
-
-        })();
-
-    </script>
+</script>
 
 </body>
 </html>
